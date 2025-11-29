@@ -9,20 +9,31 @@ body {
 
 .container {
     background: white;
-    padding: 30px;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    width: 200px;
+    width: 300px;
 }
 
 input {
-    width: 92%;
-    padding: 5px;
-    margin: 10px 0 25px;
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0 15px;
 }
 
 button {
     width: 100%;
     padding: 10px;
     cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .container {
+    width: 90%;
+    padding: 20px;
+  }
+  input {
+    width: 100%;
+  }
 }
