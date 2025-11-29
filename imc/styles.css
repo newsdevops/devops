@@ -16,7 +16,7 @@ body {
 }
 
 input {
-    width: 100%;
+    width: 92%;
     padding: 8px;
     margin: 5px 0 15px;
 }
@@ -30,7 +30,7 @@ button {
 /* Responsive */
 @media (max-width: 600px) {
   .container {
-    width: 90%;
+    width: 70%;
     padding: 20px;
   }
   input {
