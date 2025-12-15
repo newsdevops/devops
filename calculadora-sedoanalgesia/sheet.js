@@ -1,5 +1,5 @@
 
-// sheet.js v20251215-1 — filas garantizadas, sticky sin solapes (tbody-offset = header + thead), caps/min Excel, trunc 3 dec sin ceros
+// sheet.js v20251215-2 — filas garantizadas, sticky sin solapes (tbody-offset = header + thead), caps/min Excel, trunc 3 dec sin ceros
 (function(){
   'use strict';
 
