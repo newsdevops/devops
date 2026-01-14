@@ -1,0 +1,1183 @@
+/* sheet.js v20251222-1  */
+
+/**
+ * sheet.css
+ * ----------------
+ * Hoja de estilos
+ */
+
+:root{
+  --bg:#f7fafc;
+  --surface:#ffffff;
+  --text:#1f2937;
+  --muted:#4b5563;
+  --accent:#2563eb;
+  --border:#e5e7eb;
+
+  --sed:#10b981;
+  --ant:#f59e0b;
+
+  /* Sticky header/theads: JS recalcula estas variables */
+  --thead-top: 64px;      /* altura del header */
+  --thead-height: 40px;   /* altura del thead */
+  --tbody-offset: 104px;  /* header + thead */
+  --table-pad: .75rem;
+
+  /* Colores por vía */
+  --via-iv:#C00000;
+  --via-in:#3072C2;
+  --via-im:#6CA62C;
+}
+
+*{ box-sizing:border-box }
+html,body{ height:100% }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+/* =========================
+   HEADER
+   ========================= */
+.app-header{
+  position:sticky;
+  top:0;
+  z-index:300;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:saturate(1.2) blur(8px);
+  padding:.75rem 1rem;
+  border-bottom:1px solid var(--border);
+}
+.app-header .row{
+  display:flex;
+  gap:1rem;
+  align-items:center;
+  justify-content:space-between;
+}
+.left-controls{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+}
+
+.peso-box{
+  display:flex;
+  gap:.5rem;
+  align-items:center;
+  background:#f3f4f6;
+  border:1px solid var(--border);
+  padding:.4rem .6rem;
+  border-radius:.6rem;
+  margin-left:auto;
+  margin-right:var(--table-pad);
+}
+.peso-box input{
+  width:4rem;
+  max-width:15vw;
+  padding:.40rem .6rem;
+  border-radius:.5rem;
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--text);
+}
+
+main{ max-width:1100px; margin:0 auto; padding:1rem }
+
+/* =========================
+   SECCIONES
+   ========================= */
+.section{
+  margin:1rem 0 1.25rem;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:1rem;
+  overflow:hidden;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.section-header{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  padding:.6rem .9rem;
+  border-bottom:1px solid var(--border);
+  background:#fff;
+}
+
+.section-header .pill{
+  padding:.2rem .6rem;
+  border-radius:999px;
+  font-weight:600;
+  border:1px solid var(--border);
+}
+.section-header .pill.sed{ background:#ecfdf5; color:#065f46 }
+.section-header .pill.ant{ background:#fffbeb; color:#92400e }
+
+/* =========================
+   TABLAS
+   ========================= */
+.table-wrap{
+  padding:var(--table-pad);
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scroll-behavior:smooth;
+}
+.sheet{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  min-width:760px;
+}
+
+/* Cabecera sticky */
+.sheet thead{
+  position:sticky;
+  top:var(--thead-top);
+  z-index:200;
+  background:#fff;
+}
+.sheet thead::after{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:0;
+  height:1px;
+  background:var(--border);
+}
+.sheet thead th{
+  color:#374151;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  font-size:.76rem;
+  padding:.5rem .6rem;
+  border-bottom:1px solid var(--border);
+}
+
+/* Espaciador para que el sticky no tape la primera fila */
+.sheet tbody::before{
+  content:"";
+  display:block;
+  height:var(--tbody-offset);
+}
+
+.sheet tbody tr{ background:#fff; border-bottom:1px solid var(--border) }
+.sheet tbody tr:last-child{ border-bottom:none }
+.sheet tbody tr td{ padding:.55rem .6rem; vertical-align:top }
+
+/* Marcador lateral por categoría (JS puede sobreescribir color con --row-accent) */
+.sheet tbody tr.row-sed td{ border-left:4px solid var(--row-accent, var(--sed)) }
+.sheet tbody tr.row-ant td{ border-left:4px solid var(--row-accent, var(--ant)) }
+.sheet tbody tr{ background:var(--row-accent-bg, #fff) }
+
+.sheet tbody tr.group-divider td{ border-top:1.5px dashed #cbd5e1 }
+
+/* Clamp */
+.clamped-max{ background:#fee2e2 !important; color:#7f1d1d; border-radius:.3rem; padding:.15rem .25rem }
+.clamped-min{ background:#ffedd5 !important; color:#78350f; border-radius:.3rem; padding:.15rem .25rem }
+
+/* Colores por vía: pinta Vía y Dosis/Peso (celda siguiente) */
+.sheet tbody td.via-iv,
+.sheet tbody td.via-iv + td{ color:var(--via-iv); font-weight:400 }
+.sheet tbody td.via-in,
+.sheet tbody td.via-in + td{ color:var(--via-in); font-weight:400 }
+.sheet tbody td.via-im,
+.sheet tbody td.via-im + td{ color:var(--via-im); font-weight:400 }
+
+/* Fondos por columna (como pediste) */
+.sheet tbody td.dose{ 
+	background:#9FC5E8;
+	font-size: 1.2rem;
+	font-weight: 700;
+
+}
+
+.sheet tbody td.vol{ 
+	background:#9BBB59;
+	font-size: 1.2rem;
+	font-weight: 700;
+}
+
+.sheet tbody td.limits{
+	background:#DD7E6B;
+	color:#000;
+	text-align:center;
+	white-space:nowrap;
+	font-size: 1rem;
+	font-weight: 600;
+}
+
+/* Columna “Fármaco” opcional: se oculta salvo modo TODOS (JS añade .show-farmaco) */
+#tabla-sedantes .col-farmaco,
+#tabla-antidotos .col-farmaco{ display:none }
+#tabla-sedantes.show-farmaco .col-farmaco,
+#tabla-antidotos.show-farmaco .col-farmaco{ display:table-cell }
+#tabla-sedantes.show-farmaco td.col-farmaco,
+#tabla-antidotos.show-farmaco td.col-farmaco{
+  font-weight:550;
+  color:#111827;
+  white-space:nowrap;
+}
+
+/* =========================
+   MENÚ HAMBURGUESA + DRAWER
+   ========================= */
+.menu-btn{
+  width:44px;
+  height:44px;
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:.75rem;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+}
+.menu-btn:active{ transform:scale(.98) }
+.menu-btn:focus{ outline:2px solid rgba(37,99,235,.35); outline-offset:2px }
+
+.menu-icon{
+  width:18px;
+  height:2px;
+  background:var(--text);
+  border-radius:999px;
+  position:relative;
+  display:block;
+}
+.menu-icon::before,
+.menu-icon::after{
+  content:"";
+  position:absolute;
+  left:0;
+  width:18px;
+  height:2px;
+  background:var(--text);
+  border-radius:999px;
+}
+.menu-icon::before{ top:-6px }
+.menu-icon::after{ top:6px }
+
+.menu-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  z-index:999;
+}
+
+.side-menu{
+  position:fixed;
+  top:0;
+  left:0;
+  height:100dvh;
+  width:min(320px, 85vw);
+  background:#fff;
+  border-right:1px solid var(--border);
+  box-shadow:0 20px 50px rgba(0,0,0,.25);
+  z-index:1000;
+  transform:translateX(-105%);
+  transition:transform .22s ease;
+  padding:.75rem;
+  display:flex;
+  flex-direction:column;
+  gap:.5rem;
+}
+.side-menu.is-open{ transform:translateX(0) }
+
+.side-menu__header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:.25rem .25rem .75rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:.25rem;
+}
+.side-menu__title{ font-weight:700; color:var(--text) }
+.menu-close{
+  width:40px;
+  height:40px;
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:.75rem;
+  cursor:pointer;
+}
+
+.menu-item{
+  width:100%;
+  text-align:left;
+  padding:.75rem .85rem;
+  border-radius:.75rem;
+  border:1px solid var(--border);
+  background:#fff;
+  cursor:pointer;
+  font-weight:600;
+  color:var(--text);
+}
+.menu-item:hover{ background:#f3f4f6 }
+.menu-item.is-active{
+  border-color:rgba(37,99,235,.35);
+  background:rgba(37,99,235,.08);
+}
+
+[hidden]{ display:none !important }
+
+/* =========================
+   PESTAÑAS (DESKTOP)
+   ========================= */
+.tabs{ display:none; gap:.5rem; margin-top:.75rem }
+.tab-item{
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--text);
+  font-weight:700;
+  padding:.55rem .85rem;
+  border-radius:.75rem;
+  cursor:pointer;
+}
+.tab-item:hover{ background:#f3f4f6 }
+.tab-item.is-active{
+  border-color:rgba(37,99,235,.45);
+  background:rgba(37,99,235,.10);
+}
+
+/* Desktop real: pestañas visibles y ocultar drawer */
+@media (min-width: 900px) and (pointer: fine){
+  .tabs{ display:flex }
+  .menu-btn{ display:none }
+  .menu-backdrop{ display:none !important }
+  .side-menu{ display:none }
+  
+  
+}
+
+/* Dispositivos táctiles: forzar hamburguesa */
+@media (pointer: coarse){
+  .tabs{ display:none !important }
+  .menu-btn{ display:grid !important }
+  .side-menu{ display:flex }
+  
+  
+}
+
+/* =========================
+   SUBMENÚ DE FÁRMACOS (BOTONES HORIZONTALES)
+   - Se ve en escritorio
+   - En ventana estrecha/móvil lo sustituye el dropdown
+   ========================= */
+.drug-submenu{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  gap:.5rem;
+  padding:.6rem .9rem;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* Botones: inactivo apagado, activo destacado */
+.drug-submenu .menu-item{
+  background:#f3f4f6 !important;
+  border-color:#d1d5db !important;
+  color:#6b7280 !important;
+  opacity:.55;
+  filter:saturate(.25);
+  box-shadow:none !important;
+  transform:none;
+  transition:background .15s ease, border-color .15s ease, color .15s ease,
+             opacity .15s ease, filter .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+.drug-submenu .menu-item:hover{
+  opacity:.75;
+  filter:saturate(.35);
+  background:#e5e7eb !important;
+  border-color:#9ca3af !important;
+  color:#4b5563 !important;
+}
+.drug-submenu .menu-item.is-active{
+  opacity:1 !important;
+  filter:none !important;
+  background:rgba(37,99,235,.18) !important;
+  border-color:rgba(37,99,235,.90) !important;
+  color:#1f2937 !important;
+  box-shadow:0 0 0 3px rgba(37,99,235,.18) !important;
+  transform:translateY(-1px);
+}
+.drug-submenu .menu-item.is-active:hover{
+  background:rgba(37,99,235,.24) !important;
+  box-shadow:0 0 0 4px rgba(37,99,235,.20) !important;
+}
+
+/* =========================
+   DROPDOWN MODERNO DE FÁRMACOS (móvil/ventana estrecha)
+   ========================= */
+.drug-dd{
+  display:none;      /* se activa en @media */
+  margin-left:auto;
+  position:relative;
+}
+
+.drug-dd__btn{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:.5rem;
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--text);
+  font-weight:800;
+  padding:.42rem .7rem;
+  border-radius:.8rem;
+  cursor:pointer;
+  min-height:38px;
+  box-shadow:0 1px 0 rgba(0,0,0,.03);
+  transition:box-shadow .15s ease, transform .15s ease, border-color .15s ease;
+}
+.drug-dd__btn:hover{ box-shadow:0 6px 18px rgba(0,0,0,.08); border-color:#d1d5db }
+.drug-dd__btn:active{ transform:translateY(1px) }
+.drug-dd__btn:focus{ outline:2px solid rgba(37,99,235,.35); outline-offset:2px }
+
+.drug-dd__label{
+  text-transform:uppercase;
+  white-space:nowrap;
+  max-width:52vw;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.drug-dd__chev{ display:none; }
+
+.drug-dd__panel{
+  position:absolute;
+  left:50%;
+  top:calc(100% + .5rem);
+  transform:translateX(-50%);
+  width:min(260px, 75vw);
+  max-height: min(320px, calc(100vh - 180px));
+  overflow:auto;
+  overscroll-behavior: contain;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:.9rem;
+  box-shadow:0 18px 45px rgba(0,0,0,.18);
+  padding:.35rem;
+  display:none;
+  z-index:2000;
+}
+
+.drug-dd.is-open .drug-dd__panel{ display:block }
+.drug-dd.is-open .drug-dd__chev{ transform:rotate(180deg) }
+
+.drug-dd__opt{
+  width:100%;
+  text-align:left;
+  padding:.55rem .65rem;
+  border-radius:.75rem;
+  border:1px solid transparent;
+  background:transparent;
+  cursor:pointer;
+  font-weight:800;
+  color:#111827;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.drug-dd__opt:hover{ background:#f3f4f6 }
+.drug-dd__opt.is-active{ background:rgba(37,99,235,.14); border-color:rgba(37,99,235,.55) }
+
+/* Ventana estrecha/móvil: ocultar botones, mostrar dropdown */
+@media (max-width: 900px){
+  /* Evita que el panel del dropdown quede recortado por .section (overflow:hidden) */
+  .section{ overflow: visible; }
+
+  .drug-submenu{ display:none !important }
+  .drug-dd{ display:block !important }
+}
+/* Centrar el selector de fármacos en modo estrecho */
+@media (max-width: 900px){
+  .section-header--with-filter{
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+  .section-header--with-filter .pill{
+    justify-self: start;
+  }
+  .section-header--with-filter .drug-dd{
+    justify-self: center;
+    margin-left: 0;
+  }
+}
+
+
+/* Ajustes extra en móvil */
+@media (max-width: 760px){
+  .peso-box input{ width:6.5rem }
+  .sheet{ min-width:900px }
+  .sheet tbody tr td{ padding:.5rem .55rem; font-size:.95rem }
+  .sheet thead th{ font-size:.75rem }
+  
+#ckVerifyOverlay{
+    padding: .75rem; /* menos margen lateral en móvil */
+  }
+  #ckVerifyOverlay .ck-modal{
+    width: min(560px, calc(100vw - 1.5rem)); /* 2 * .75rem */
+  }
+
+	
+
+}
+
+/* =========================
+   PRINT
+   ========================= */
+@media print{
+  .app-header{ position:static; backdrop-filter:none; border-bottom:none }
+  .sheet thead{ position:static }
+  .sheet tbody::before{ content:none; height:0 }
+  .section{ box-shadow:none; border:none }
+  body{ background:#fff }
+}
+
+
+/* =========================
+   VISTA TRASPUESTA (modo estrecho)
+   ========================= */
+
+.cards-wrap{
+  display:none;
+  padding: var(--table-pad);
+}
+
+/* Card por fármaco */
+.drug-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:1rem;
+  box-shadow:0 8px 22px rgba(0,0,0,.06);
+  overflow:hidden;
+  margin-bottom: .9rem;
+}
+
+.drug-card__title{
+  font-weight:900;
+  padding:.65rem .85rem;
+  border-bottom:1px solid var(--border);
+  text-transform:uppercase;
+  letter-spacing:.02em;
+}
+
+/* Grid traspuesto:
+   1ª columna = etiquetas
+   columnas 2..n = “líneas” del fármaco (1–3)
+*/
+/* .tgrid duplicado eliminado (se mantiene una sola definición) */
+.tgrid__cell{ padding:.48rem .55rem; border-top:1px solid var(--border,#e5e7eb);
+  min-width:0; overflow-wrap:anywhere;
+
+  }
+
+.tgrid__label{
+  font-weight: 700;
+  color:#374151;
+  background:#f8fafc;
+
+  font-size: .72rem;
+  letter-spacing: .02em;
+}
+/* Cabecera de columnas (arriba) */
+.tgrid__colhead{
+  font-weight:900;
+  text-transform:uppercase;
+  background:#ffffff;
+}
+
+/* Reutilizamos tus clases de color ya existentes */
+.tgrid__cell.dose{ background:#9FC5E8; 
+  font-size: 1.2rem;     /* <-- DOSIS (MG) */
+  font-weight: 700;
+ }
+.tgrid__cell.vol{ background:#9BBB59; 
+  font-size: 1.2rem;     /* <-- DOSIS (ML) */
+  font-weight: 700;
+ }
+
+.tgrid__cell.limits{
+  background:#DD7E6B;
+  text-align:center;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  
+  font-size: 1rem;     /* <-- DOSIS (MAX) */
+  font-weight: 600;
+
+}
+
+
+/* Clamp (si lo aplicas) */
+.tgrid__cell.clamped-max{ background:#fee2e2 !important; color:#7f1d1d; }
+.tgrid__cell.clamped-min{ background:#ffedd5 !important; color:#78350f; }
+
+/* Via */
+.tgrid__cell.via-iv{ color:var(--via-iv); font-weight:400; }
+.tgrid__cell.via-in{ color:var(--via-in); font-weight:400; }
+.tgrid__cell.via-im{ color:var(--via-im); font-weight:400; }
+
+/* Modo estrecho: se ve la traspuesta y se oculta la tabla */
+@media (max-width: 900px){
+  .section .table-wrap{ display:none !important; }
+  .cards-wrap{ display:block; }
+  
+  
+}
+
+
+/* =========================================================
+   EFECTO "FOCO" EN CARDS (móvil / modo estrecho)
+   - La card activa se eleva y crece un poco
+   - Las demás se difuminan y se atenúan (simula desenfoque del fondo)
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .cards-wrap {
+    /* Para que el z-index de la card enfocada tenga sentido */
+    position: relative;
+  }
+
+  .cards-wrap.has-focus .drug-card {
+    transition:
+      transform 220ms ease,
+      filter 220ms ease,
+      opacity 220ms ease,
+      box-shadow 220ms ease;
+    will-change: transform, filter, opacity;
+  }
+
+  /* Card activa (la "candidata" principal según visibilidad) */
+  .cards-wrap.has-focus .drug-card.is-active {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 18px 44px rgba(0,0,0,.12);
+    position: relative;
+    z-index: 5;
+  }
+
+  /* Card en foco fuerte (cuando entra COMPLETA en viewport) */
+  .cards-wrap.has-focus .drug-card.is-focus {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 26px 70px rgba(0,0,0,.18);
+    z-index: 10;
+  }
+
+  /* Las demás se ven "difuminadas" */
+  .cards-wrap.has-focus .drug-card.is-blurred {
+    filter: blur(2px) saturate(.9);
+    opacity: .55;
+    transform: scale(.99);
+  }
+
+  /* Respeto a accesibilidad: reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    .cards-wrap.has-focus .drug-card {
+      transition: none !important;
+    }
+    .cards-wrap.has-focus .drug-card.is-blurred {
+      filter: none !important;
+      opacity: .75;
+    }
+  }
+}
+
+
+
+
+/* --- Complementos necesarios para que el JS de cards funcione al 100% --- */
+
+/* Contenedor interno de la card (JS lo crea como .drug-card__body) */
+.drug-card__body{
+  overflow-x: visible;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Solo si el fármaco tiene 3+ columnas, el JS añade .is-scroll */
+.drug-card__body.is-scroll{
+  overflow-x: auto;
+}
+
+/* El JS setea --cols y, cuando hay 3+ columnas, también --col-min */
+.tgrid{
+  --cols: 1;
+  --col-min: 105px;
+  display: grid;
+  width: 100%;
+  grid-template-columns: 135px repeat(var(--cols), minmax(var(--col-min), 1fr));
+}
+
+/* Separador vertical tenue entre columnas de datos (no en la columna de etiquetas) */
+.tgrid__cell:not(.tgrid__label){
+  border-left: 1px solid rgba(148,163,184,.45);
+}
+
+/* Sticky horizontal: fija la columna de etiquetas cuando hay scroll horizontal */
+.drug-card__body.is-scroll .tgrid__label,
+.drug-card__body.is-scroll .tgrid__corner{
+  position: sticky;
+  left: 0;
+  z-index: 25;
+  background: #f8fafc;
+  box-shadow: 10px 0 14px -12px rgba(15,23,42,.35);
+}
+.drug-card__body.is-scroll .tgrid__corner{
+  background: #fff;
+  z-index: 30;
+}
+
+/* Etiquetas un pelín más “compactas” (como en el CSS inyectado) */
+/* .tgrid__label duplicado eliminado */
+/* ===== Header fijo en modo estrecho (como antes) ===== */
+@media (max-width: 900px){
+  .app-header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 300; /* mantiene la prioridad que ya tienes */
+  }
+
+  /* Evita que el contenido quede “debajo” del header fijo */
+  body{
+    padding-top: var(--app-header-h, 72px);
+  }
+  
+  .sheet tbody tr td{
+		font-size: 1.0rem;   /* resto de valores en móvil */
+		font-weight: 500;
+	  }
+
+	  .sheet tbody td.dose,
+	  .sheet tbody td.vol,
+	  .sheet tbody td.limits{
+		font-size: 1.05rem;  /* columnas clave en móvil */
+		font-weight: 800;
+	  }
+}
+
+
+/* =========================
+   CHECKLIST
+   ========================= */
+   
+   
+.destacado {
+    font-weight: 900;
+    font-size: 1.2rem;
+
+  }
+  .no_destacado {
+    font-weight: 200;
+    font-size: 0.90rem;
+
+  }
+  
+
+
+.section-header .pill.chk{
+  background: rgba(37,99,235,.10);
+  color: #1e40af;
+}
+
+.checklist-wrap{
+  padding: var(--table-pad);
+}
+
+.checklist-title{
+  margin: .25rem 0 .85rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.checklist{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: .5rem;
+}
+
+.checklist ul{
+  list-style: none;
+  margin: .45rem 0 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: .35rem;
+}
+
+.ck-line{
+  display: flex;
+  align-items: flex-start;
+  gap: .55rem;
+  padding: .55rem .65rem;
+  border: 1px solid var(--border);
+  border-radius: .75rem;
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,.02);
+}
+
+.ck-line span{
+  color: var(--text);
+  font-weight: 600;
+}
+
+.ck-line input[type="checkbox"]{
+  margin-top: .15rem;
+  inline-size: 1.05rem;
+  block-size: 1.05rem;
+  accent-color: var(--accent);
+}
+
+/* Padres principales */
+.ck-line.ck-top{
+  padding: .6rem .7rem;
+}
+
+.ck-line.ck-top span{
+  font-size: 1.02rem;
+  font-weight: 900;
+}
+
+/* Desplegables (<details>) */
+.ck-group > summary{
+  list-style: none;
+  cursor: pointer;
+}
+
+.ck-group > summary::-webkit-details-marker{ display:none; }
+
+.ck-group > summary .ck-line{
+  border-color: rgba(37,99,235,.30);
+}
+
+.ck-group > summary .ck-line::after{
+  content: "▾";
+  margin-left: auto;
+  color: rgba(37,99,235,.75);
+  transform: rotate(-90deg);
+  transition: transform .15s ease;
+}
+
+.ck-group[open] > summary .ck-line::after{
+  transform: rotate(0deg);
+}
+
+/* Hijos en azul solo dentro de grupos */
+.ck-group ul .ck-line{
+  background: rgba(37,99,235,.04);
+  border-color: rgba(37,99,235,.22);
+}
+
+.ck-group ul .ck-line span{
+  color: var(--accent);
+  font-weight: 750;
+}
+
+@media (max-width: 760px){
+  .ck-line{ padding: .5rem .6rem; }
+  .ck-line.ck-top span{ font-size: 1.0rem; }
+  
+#ckVerifyOverlay{
+    padding: .75rem; /* menos margen lateral en móvil */
+  }
+  #ckVerifyOverlay .ck-modal{
+    width: min(560px, calc(100vw - 1.5rem)); /* 2 * .75rem */
+  }
+
+
+}
+
+/* ===== CHECKLIST: VERDE EN MARCADOS + BOTÓN VERIFICACIÓN (override final) ===== */
+:root{
+  
+  
+--ok: #16a34a;                 /* verde fuerte */
+  --ok-dark: #14532d;            /* texto */
+  --ok-bg: rgba(22,163,74,.26);  /* fondo potente */
+  --ok-border: rgba(22,163,74,.85); /* borde fuerte */
+
+
+="checkbox"]{  --ok-bg: rgba(16,185,129,.12);
+  accent-color: var(--ok);
+}
+
+/* Mantén el AZUL solo cuando NO esté marcado */
+#section-checklist details.ck-group ul .ck-line:not(.is-checked){
+  background: rgba(37,99,235,.04);
+  border-color: rgba(37,99,235,.22);
+}
+#section-checklist details.ck-group ul .ck-line:not(.is-checked) span{
+  color: var(--accent);
+  font-weight: 750;
+}
+
+/* MARCADO -> VERDE (gana a cualquier azul) */
+#section-checklist .ck-line.is-checked{
+  background: var(--ok-bg) !important;
+  border-color: var(--ok-border) !important;
+}
+#section-checklist .ck-line.is-checked span{
+  color: var(--ok-dark) !important;
+  font-weight: 900;
+}
+
+/* Padres automáticos: se ven pero no se pueden clicar */
+#section-checklist input[type="checkbox"][data-parent="1"]{
+  cursor: not-allowed;
+}
+#section-checklist input[type="checkbox"][data-parent="1"]:disabled{
+  opacity: 1;
+}
+
+/* Botón Verificación Correcta (por ID, para que SIEMPRE pille estilo) */
+#section-checklist .ck-verify-wrap{
+  margin-top: .95rem;
+  display: flex;
+  justify-content: center;
+}
+
+#section-checklist #checklistVerifyBtn{
+  width: min(560px, 100%);
+  text-align: center;
+  padding: .95rem 1.1rem;
+  border-radius: .95rem;
+
+ border: 2px solid rgba(22,163,74,.90);
+background: linear-gradient(135deg, rgba(22,163,74,.40), rgba(22,163,74,.22));
+box-shadow: 0 14px 34px rgba(22,163,74,.34), 0 0 0 5px rgba(22,163,74,.22);
+  color: var(--ok-dark);
+
+  font-weight: 900;
+  font-size: 1.05rem;
+  cursor: pointer;
+
+ 
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+
+#section-checklist #checklistVerifyBtn:hover{
+  background: rgba(16,185,129,.22);
+  box-shadow: 0 14px 30px rgba(16,185,129,.24);
+}
+
+#section-checklist #checklistVerifyBtn:active{
+  transform: translateY(1px);
+}
+/* ===== FIN override ===== */
+  --ok-border: rgba(16,185,129,.45);
+}
+
+/* Check verde */
+
+
+
+/* ===== CHECKLIST: botones RESET estilo pill ===== */
+
+/* pill gris pequeña (para reset) */
+#section-checklist .pill-reset{
+  margin-left: auto;                 /* empuja a la derecha */
+  padding: .14rem .55rem;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-weight: 900;
+  font-size: .72rem;
+  letter-spacing: .04em;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+#section-checklist .pill-reset:hover{
+  background: #e5e7eb;
+  color: #4b5563;
+  border-color: #cbd5e1;
+}
+
+#section-checklist .pill-reset:active{
+  transform: translateY(1px);
+}
+
+/* Reset dentro de una fila ck-line (padres) */
+#section-checklist .ck-reset-sub{
+  margin-left: auto; /* lo manda a la derecha dentro de la fila */
+}
+
+/* Para que no “rompa” el layout en filas estrechas */
+#section-checklist .ck-line{
+  gap: .55rem;
+}
+
+
+/* ===== FIX: RESET a la derecha incluso en <details> ===== */
+
+/* 1) Que el texto ocupe el espacio y empuje los botones */
+#section-checklist .ck-line > span{
+  flex: 1;                 /* el span se estira */
+  min-width: 0;            /* evita desbordes raros */
+}
+
+/* 2) El reset SIEMPRE a la derecha dentro de la fila */
+#section-checklist .ck-line .ck-reset-sub{
+  margin-left: auto;       /* empuja a la derecha */
+}
+
+/* 3) La flecha NO debe usar margin-left:auto (si no, se come el hueco) */
+#section-checklist details.ck-group > summary .ck-line::after{
+  margin-left: .55rem;     /* separación normal */
+}
+
+/* (Opcional) Ajuste visual: que el RESET no “rompa” la altura */
+#section-checklist .pill-reset{
+  align-self: center;
+}
+
+/* ===== Verificación Correcta: más separación + más resaltado ===== */
+
+/* 1) Más separación entre el último check y el botón */
+#section-checklist .checklist{
+  margin-bottom: 1.6rem;   /* separa el botón del último item */
+}
+
+/* 2) Separación extra + línea superior suave (opcional, queda muy “pro”) */
+#section-checklist .ck-verify-wrap{
+  margin-top: 1.2rem;      /* aire adicional */
+  padding-top: 1.1rem;
+  border-top: 1px dashed rgba(16,185,129,.45);
+}
+
+/* 3) Botón más “premium” y llamativo */
+#section-checklist #checklistVerifyBtn{
+  width: min(640px, 100%);
+  padding: 1.05rem 1.25rem;
+
+  font-size: 1.18rem;      /* más grande */
+  font-weight: 950;        /* más contundente */
+
+  
+border: 2px solid rgba(22,163,74,.90);
+background: linear-gradient(135deg, rgba(22,163,74,.40), rgba(22,163,74,.22));
+box-shadow: 0 14px 34px rgba(22,163,74,.34), 0 0 0 5px rgba(22,163,74,.22);
+
+}
+
+/* Hover más evidente */
+#section-checklist #checklistVerifyBtn:hover{
+  background: linear-gradient(
+    135deg,
+    rgba(16,185,129,.38),
+    rgba(16,185,129,.22)
+  );
+  box-shadow:
+    0 18px 44px rgba(16,185,129,.32),
+    0 0 0 6px rgba(16,185,129,.22);
+}
+
+/* Pulsación sutil al click */
+#section-checklist #checklistVerifyBtn:active{
+  transform: translateY(2px);
+}
+
+@keyframes ckPulseGreen{
+  0%   { box-shadow: 0 14px 34px rgba(16,185,129,.28), 0 0 0 0 rgba(16,185,129,.22); }
+  70%  { box-shadow: 0 14px 34px rgba(16,185,129,.28), 0 0 0 10px rgba(16,185,129,0); }
+  100% { box-shadow: 0 14px 34px rgba(16,185,129,.28), 0 0 0 0 rgba(16,185,129,0); }
+}
+
+/* Se aplica cuando el botón deja de estar hidden (es decir, cuando aparece) */
+#section-checklist #checklistVerifyBtn{
+  animation: ckPulseGreen 1.2s ease-out 1;
+  
+
+
+}
+
+
+/* =========================================================
+   CHECKLIST: MODAL "Verificación Correcta" (overlay)
+   ========================================================= */
+
+/* Cuando el modal está abierto, atenúa el checklist */
+body.ck-modal-open #section-checklist .checklist-wrap{
+  filter: blur(2.5px);
+  opacity: .35;
+  pointer-events: none; /* evita clicks debajo */
+  transition: filter .18s ease, opacity .18s ease;
+}
+
+/* Fondo (backdrop) */
+#ckVerifyOverlay{
+	box-sizing: border-box;
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(3px);
+  z-index: 5000;
+}
+
+/* Oculto */
+#ckVerifyOverlay[hidden]{
+  display: none !important;
+}
+
+/* Tarjeta modal (rectángulo) */
+#ckVerifyOverlay .ck-modal{
+	box-sizing: border-box;
+	margin: 0 auto; 
+  width: min(560px, calc(100vw - 2.5rem));
+  background: #fff;
+  border: 1px solid rgba(16,185,129,.45);
+  border-radius: 1.1rem;
+  box-shadow: 0 26px 70px rgba(0,0,0,.25);
+  padding: 1.1rem 1.1rem 1.2rem;
+  text-align: center;
+}
+
+/* Título y texto */
+#ckVerifyOverlay .ck-modal__title{
+  margin: .1rem 0 .35rem;
+  font-weight: 950;
+  font-size: 1.25rem;
+  color: #064e3b;
+}
+
+#ckVerifyOverlay .ck-modal__sub{
+  margin: 0 0 .9rem;
+  color: #4b5563;
+  font-size: .95rem;
+}
+
+/* Botón dentro del modal: más llamativo */
+#ckVerifyOverlay #checklistVerifyBtn{
+  width: min(420px, 100%);
+  padding: 1rem 1.15rem;
+  border-radius: .95rem;
+  border: 2px solid rgba(16,185,129,.85);
+  background: linear-gradient(135deg, rgba(16,185,129,.30), rgba(16,185,129,.18));
+  color: #064e3b;
+  font-weight: 950;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 14px 34px rgba(16,185,129,.28), 0 0 0 5px rgba(16,185,129,.18);
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+
+#ckVerifyOverlay #checklistVerifyBtn:hover{
+  background: linear-gradient(135deg, rgba(16,185,129,.38), rgba(16,185,129,.22));
+  box-shadow: 0 18px 44px rgba(16,185,129,.32), 0 0 0 7px rgba(16,185,129,.22);
+}
+
+#ckVerifyOverlay #checklistVerifyBtn:active{
+  transform: translateY(2px);
+}
+
+
