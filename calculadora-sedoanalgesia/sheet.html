@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculadora de Perfusiones y Fármacos — Hoja completa</title>
+
+  <!-- Favicons / iconos pestaña -->
+  <link rel="icon" href="assets/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+
+  <link rel="stylesheet" href="css/sheet.css?v=v20260128-1" />
+</head>
+<body>
+  <!-- SPLASH / PANTALLA DE CARGA -->
+  <div id="splash" class="splash" role="status" aria-live="polite">
+    <div class="splash__stack">
+      <!-- Icono arriba, fuera de la caja -->
+	<div class="splash__logoWrap" aria-hidden="true">
+      <img class="splash__logo" src="assets/logo-96.png" alt="" aria-hidden="true" />
+	</div>
+      <div class="splash__card">
+        <div class="splash__title">Calculadora de Perfusiones y Fármacos</div>
+        <div class="splash__subtitle">Cargando…</div>
+        <div class="splash__bar" aria-hidden="true">
+          <div class="splash__barFill"></div>
+        </div>
+        <div class="splash__hint">Espera por favor...</div>
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="row">
+      <div class="left-controls">
+        <!-- Botón hamburguesa -->
+        <button class="menu-btn" id="menuBtn" aria-label="Abrir menú" aria-controls="sideMenu" aria-expanded="false" type="button">
+          <span class="menu-icon" aria-hidden="true"></span>
+        </button>
+
+       
+
+        <h3>Calculadora de Perfusiones y Fármacos</h3>
+ <!-- Icono pequeño en header -->
+        <img class="app-logo" src="assets/logo-96.png" alt="" aria-hidden="true" />
+      </div>
+
+
+
+
+
+
+<button
+  id="themeToggle"
+  class="icon-btn"
+  type="button"
+  aria-label="Cambiar tema"
+  aria-pressed="false"
+  title="Cambiar tema"
+>
+  🌙
+</button>
+
+
+  </div>
+
+<!-- Tabs -->
+<!-- Tabs de navegación (GRUPOS) -->
+<div class="tabs tabs--nav" id="navTabs" role="tablist" aria-label="Navegación">
+  <button class="tab-item is-active" data-nav="prep" type="button">Preparación Sedación</button>
+  <button class="tab-item" data-nav="estrategia" type="button">Estrategia según procedimiento</button>
+  <button class="tab-item" data-nav="calc" type="button">Calculadora</button>
+
+  <!-- Estos van directos (sin subtabs) -->
+  <button class="tab-item" data-view="eventos-adversos" type="button">Manejo eventos adversos</button>
+  <button class="tab-item" data-view="alta" type="button">Criterios de alta</button>
+  <button class="tab-item" data-view="hipoglucemia" type="button">Hipoglucemia</button>
+</div>
+
+<!-- Subtabs: PREPARACIÓN -->
+<div class="tabs tabs--subnav" data-nav="prep" role="tablist" aria-label="Preparación Sedación">
+  <button class="tab-item is-active" data-view="procedimientos-sedo" type="button">Procedimientos Sedoanalgesia</button>
+  <button class="tab-item" data-view="checklist" type="button">Checklist</button>
+</div>
+
+<!-- Subtabs: ESTRATEGIA -->
+<div class="tabs tabs--subnav" data-nav="estrategia" role="tablist" aria-label="Estrategia" hidden>
+  <button class="tab-item is-active" data-view="proc-no-dolorosos" type="button">Procedimientos no dolorosos</button>
+  <button class="tab-item" data-view="proc-poco-dolorosos" type="button">Procedimientos poco dolorosos</button>
+  <button class="tab-item" data-view="proc-muy-dolorosos" type="button">Procedimientos muy dolorosos</button>
+</div>
+
+<!-- Subtabs: CALCULADORA -->
+<div class="tabs tabs--subnav" data-nav="calc" role="tablist" aria-label="Calculadora" hidden>
+  <button class="tab-item is-active" data-view="sedantes" type="button">Sedantes</button>
+  <button class="tab-item" data-view="antidotos" type="button">Antídotos</button>
+  <button class="tab-item" data-view="analgesicos-sistemicos" type="button">Analgésicos sistémicos</button>
+  <button class="tab-item" data-view="analgesicos-locales" type="button">Analgésicos locales</button>
+</div>
+
+  <p class="disclaimer">Uso orientativo. Verificar siempre con protocolos locales y profesionales sanitarios.</p>
+  <p class="help">Ajusta el peso y la tabla se recalcula automáticamente.</p>
+</header>
+
+<!-- DOCK / BARRA INFERIOR DEL PESO (fuera del header) -->
+<div id="pesoDock" class="peso-dock">
+  <div class="peso-box" aria-label="Control de peso">
+    <div class="peso-top">
+      <label for="peso" class="peso-label">
+        Peso (kg)
+        <span id="pesoPreviewBadge" class="peso-preview-badge" hidden aria-live="polite">
+          Previsualizando…
+        </span>
+      </label>
+
+      <input
+        id="peso"
+        class="peso-input"
+        type="number"
+        min="1"
+        step="0.1"
+        value="30"
+        inputmode="decimal"
+        aria-describedby="pesoActiveBadge"
+      />
+
+      <button
+        id="pesoLockBtn"
+        class="icon-btn"
+        type="button"
+        aria-pressed="false"
+        aria-label="Bloquear peso"
+        title="Bloquear peso"
+      >
+        🔓
+      </button>
+    </div>
+
+    <div class="peso-slider-row" aria-label="Ajuste rápido de peso">
+      <button id="pesoMinusBar" class="peso-bar-btn" type="button" aria-label="Disminuir peso">−</button>
+      <input
+        id="pesoRange"
+        class="peso-range"
+        type="range"
+        min="1"
+        max="120"
+        step="0.1"
+        value="30"
+        aria-label="Barra para ajustar el peso"
+      />
+      <button id="pesoPlusBar" class="peso-bar-btn" type="button" aria-label="Aumentar peso">+</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Backdrop (fondo oscuro al abrir el menú) -->
+<div class="menu-backdrop" id="menuBackdrop" hidden></div>
+
+
+<!-- Menú lateral -->
+<nav class="side-menu" id="sideMenu" aria-hidden="true" hidden>
+  <div class="side-menu__header">
+    <span class="side-menu__title">Menú</span>
+    <button class="menu-close" id="menuClose" aria-label="Cerrar menú" type="button">✕</button>
+  </div>
+
+  <!-- Preparación Sedación -->
+  <details class="nav-group" id="nav-prep">
+    <summary class="nav-group__sum">Preparación Sedación</summary>
+
+    <!-- No implementado aún (sin data-view) -->
+<button class="menu-item" data-view="procedimientos-sedo" type="button">Procedimientos Sedoanalgesia</button>
+    <!-- ✅ Hecho -->
+    <button class="menu-item" data-view="checklist" type="button">Checklist</button>
+  </details>
+
+  <!-- Estrategia según procedimiento -->
+  <details class="nav-group" id="nav-estrategia">
+    <summary class="nav-group__sum">Estrategia según procedimiento</summary>
+
+    <!-- No implementados aún -->
+<button class="menu-item" data-view="proc-no-dolorosos" type="button">Procedimientos no dolorosos</button>
+<button class="menu-item" data-view="proc-poco-dolorosos" type="button">Procedimientos poco dolorosos</button>
+<button class="menu-item" data-view="proc-muy-dolorosos" type="button">Procedimientos muy dolorosos</button>
+  </details>
+
+  <!-- Calculadora -->
+  <details class="nav-group" id="nav-calc">
+    <summary class="nav-group__sum">Calculadora</summary>
+
+    <!-- ✅ Hechos -->
+    <button class="menu-item" data-view="sedantes" type="button">Sedantes</button>
+    <button class="menu-item" data-view="antidotos" type="button">Antídotos</button>
+
+    <!-- No implementados aún -->
+<button class="menu-item" data-view="analgesicos-sistemicos" type="button">Analgésicos sistémicos</button>
+<button class="menu-item" data-view="analgesicos-locales" type="button">Analgésicos locales</button>
+  </details>
+
+  <!-- Manejo eventos adversos -->
+  <details class="nav-group" id="nav-adversos">
+    <summary class="nav-group__sum">Manejo eventos adversos</summary>
+
+    <!-- No implementado aún -->
+<button class="menu-item" data-view="eventos-adversos" type="button">Manejo eventos adversos</button>
+  </details>
+
+  <!-- ✅ Criterios de alta -->
+  <details class="nav-group" id="nav-alta">
+    <summary class="nav-group__sum">Criterios de alta</summary>
+
+    <button class="menu-item" data-view="alta" type="button">Criterios de alta</button>
+  </details>
+
+  <!-- ✅ Hipoglucemia -->
+  <details class="nav-group" id="nav-hipo">
+    <summary class="nav-group__sum">Hipoglucemia</summary>
+
+    <button class="menu-item" data-view="hipoglucemia" type="button">Hipoglucemia</button>
+  </details>
+</nav>
+
+
+<main>
+  <!-- SEDANTES -->
+  <section class="section" id="section-sedantes">
+    <div class="section-header section-header--with-filter">
+      <span class="pill sed">SEDANTES</span>
+
+      <!-- Dropdown (móvil / ventana estrecha) -->
+      <div class="drug-dd" id="drugDD-sedantes">
+        <button class="drug-dd__btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+          <span class="drug-dd__label">TODOS</span>
+          <span class="drug-dd__chev" aria-hidden="true">▾</span>
+        </button>
+        <div class="drug-dd__panel" role="listbox" tabindex="-1"></div>
+      </div>
+    </div>
+
+    <!-- Submenú (botones en escritorio) -->
+    <div class="drug-submenu" id="submenu-sedantes"></div>
+<!-- Vista traspuesta (solo modo estrecho) -->
+<div class="cards-wrap" id="cards-sedantes" hidden></div>
+    <div class="table-wrap table-wrap--sedantes">
+      <table class="sheet" id="tabla-sedantes">
+        <thead>
+          <tr>
+            <th class="col-farmaco">Fármaco</th>
+            <th>Vía</th>
+            <th>Dosis/Peso</th>
+            <th>Pr comercial</th>
+            <th>Dosis (mg)</th>
+            <th>Dosis (ml)</th>
+            <th>Dosis Máx</th>
+            <th>T. Admón</th>
+            <th>Observaciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ANTÍDOTOS -->
+<section class="section" id="section-antidotos">
+  <div class="section-header section-header--with-filter">
+    <span class="pill ant">ANTÍDOTOS</span>
+
+    <!-- Dropdown (móvil / ventana estrecha) -->
+    <div class="drug-dd" id="drugDD-antidotos">
+      <button class="drug-dd__btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+        <span class="drug-dd__label">TODOS</span>
+        <span class="drug-dd__chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="drug-dd__panel" role="listbox" tabindex="-1"></div>
+    </div>
+  </div>
+
+  <!-- Submenú (botones en escritorio) -->
+  <div class="drug-submenu" id="submenu-antidotos"></div>
+
+  <!-- Vista traspuesta (solo modo estrecho) -->
+  <div class="cards-wrap" id="cards-antidotos" hidden></div>
+
+  <div class="table-wrap">
+    <table class="sheet" id="tabla-antidotos">
+      <thead>
+        <tr>
+          <th class="col-farmaco">Fármaco</th>
+          <th>Vía</th>
+          <th>Dosis/Peso</th>
+          <th>Pr comercial</th>
+          <th>Dosis (mg)</th>
+          <th>Dosis (ml)</th>
+          <th>Dosis Máx</th>
+          <th>T. Admón</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ANALGÉSICOS LOCALES -->
+<section class="section" id="section-analgesicos-locales" hidden>
+  <div class="section-header section-header--with-filter">
+    <span class="pill loc">ANALGÉSICOS LOCALES</span>
+<!-- NUEVA pill (solo modo estrecho) -->
+
+<button
+  id="locConsBtn"
+  class="pill pill-info pill-consideraciones"
+  type="button"
+  aria-haspopup="dialog"
+  aria-expanded="false"
+>
+  CONSIDERACIONES
+</button>
+  
+</div>
+
+<!-- MODAL/OVERLAY CONSIDERACIONES (oculto por defecto) -->
+<div id="locConsOverlay" class="hipo-info-overlay" hidden aria-hidden="true">
+  <div class="hipo-info-card" role="dialog" aria-modal="true" aria-label="Consideraciones Analgésicos locales">
+    <div class="hipo-info-card__title">CONSIDERACIONES</div>
+
+    <!-- Contenido: lo rellenamos copiando lo que ya tienes en #loc-consideraciones -->
+    <div id="locConsContent" class="prose"></div>
+
+    <div class="hipo-info-hint">Pulsa en la tarjeta o fuera para cerrar.</div>
+  </div>
+</div>
+
+  <!-- Cards (móvil/estrecho) -->
+  <div class="cards-wrap" id="cards-analgesicos-locales" hidden></div>
+
+  <!-- Tabla (desktop) -->
+  <div class="table-wrap">
+    <table class="sheet" id="tabla-analgesicos-locales">
+      <thead>
+        <tr>
+          <th class="col-farmaco">Fármaco</th>
+          <th>Presentación</th>
+          <th class="num">Dosis máx (mg)</th>
+          <th class="num">Dosis máx (ml)</th>
+          <th class="num">Máx absoluto</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Textos -->
+  <div class="info-wrap">
+    <div class="info-grid">
+     
+<article class="info-card" hidden>
+  <h3>Consideraciones</h3>
+  <div id="loc-consideraciones"></div>
+</article>
+
+
+      
+<article class="info-card info-card--note">
+  <h3>Precauciones</h3>
+  <div id="loc-precauciones"></div>
+</article>
+
+    </div>
+  </div>
+</section>
+<!-- PROCEDIMIENTOS SEDOANALGESIA (placeholder) -->
+<section class="section" id="section-procedimientos-sedo" hidden>
+  <div class="section-header">
+    <span class="pill chk">PROCEDIMIENTOS SEDOANALGESIA</span>
+  </div>
+  <div class="info-wrap">
+    <p class="help">Sección pendiente de contenido.</p>
+  </div>
+</section>
+
+<!-- ESTRATEGIA: NO DOLOROSOS (placeholder) -->
+<section class="section" id="section-proc-no-dolorosos" hidden>
+  <div class="section-header">
+    <span class="pill chk">PROC. NO DOLOROSOS</span>
+  </div>
+  
+<div class="info-wrap proc-wrap">
+    <!-- Intro -->
+
+
+    <!-- 2 columnas en ancho / 1 columna en estrecho -->
+    <div class="proc-grid">
+
+      <!-- SITUACIÓN CLÍNICA -->
+      <article class="proc-card">
+        <h3 class="proc-card-title">A. Situación clínica</h3>
+
+        <div class="proc-block">
+          <h4 class="proc-block-title">Diagnóstico por imagen</h4>
+          <ul class="proc-list">
+            <li>Resonancia magnética (RM)</li>
+            <li>TAC en niños pequeños</li>
+            <li>PET</li>
+          </ul>
+        </div>
+
+        <div class="proc-block">
+          <h4 class="proc-block-title">Procedimientos diagnósticos</h4>
+          <ul class="proc-list">
+            <li>Electroencefalograma en paciente no colaborador</li>
+            <li>Potenciales evocados</li>
+            <li>Estudios oftalmológicos prolongados</li>
+          </ul>
+        </div>
+
+        <div class="proc-block">
+          <h4 class="proc-block-title">Procedimientos médicos no dolorosos</h4>
+          <p class="proc-text">
+            Curaciones superficiales, cuerpos extraños, exploraciones.
+          </p>
+        </div>
+      </article>
+
+      <!-- MANEJO CLÍNICO -->
+      <article class="proc-card">
+        <h3 class="proc-card-title">B. Manejo clínico</h3>
+
+        <div class="proc-note">
+          <strong>1. Métodos no farmacológicos</strong> en sedación y control del dolor. Valorar la edad.
+        </div>
+
+        <ul class="proc-list proc-list--bullets">
+          <li>Técnicas cognitivas–conductuales adaptadas a la edad</li>
+          <li>Distracción: dispositivos electrónicos / realidad virtual. Música</li>
+          <li>Cuentos o narración. Burbujas, soplar, juegos de enfoque atencional</li>
+          <li>Contacto piel con piel. Posición de confort. Contención suave</li>
+          <li>Succión no nutritiva en lactantes. Lactancia materna durante procedimientos menores</li>
+        </ul>
+<br>
+
+      <!-- OPCIONES FARMACOLÓGICAS (tabla bonita) -->
+     
+         <div class="proc-note"><strong>2. Opciones farmacológicas</strong></div>
+
+        <div class="proc-table-wrap">
+          <table class="proc-table" aria-label="Opciones farmacológicas">
+            <thead>
+              <tr>
+                <th>Fármaco</th>
+                <th class="center">Analg</th>
+                <th>Sedación</th>
+                <th class="center">EA Resp</th>
+                <th>Estab. Hemodin.</th>
+                <th>Otros EA</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="fw">Midazolam</td>
+                <td class="center">-</td>
+                <td>Variable s. dosis</td>
+                <td class="center">Moderada</td>
+                <td>Buena</td>
+                <td>IN: Prurito nasal</td>
+              </tr>
+
+              <tr>
+                <td class="fw">Ketamina</td>
+                <td class="center">↑↑</td>
+                <td>Disociativo</td>
+                <td class="center">Baja</td>
+                <td>Muy buena</td>
+                <td>Hipersalivación, vómitos. Laringoespasmo, alucinaciones, mioclónicas.</td>
+              </tr>
+
+              <tr>
+                <td class="fw">Dexmedetomidina</td>
+                <td class="center">↑</td>
+                <td>Prolongada</td>
+                <td class="center">Muy baja</td>
+                <td>Bradicardia</td>
+                <td>Excelente perfil &gt; 3 meses</td>
+              </tr>
+
+              <tr>
+                <td class="fw">Óxido nitroso</td>
+                <td class="center">±</td>
+                <td>Ansiolisis</td>
+                <td class="center">Muy baja</td>
+                <td>Muy buena</td>
+                <td>Euforia, vómitos</td>
+              </tr>
+
+              <tr>
+                <td class="fw">Propofol</td>
+                <td class="center">±</td>
+                <td>Profunda</td>
+                <td class="center">Alta</td>
+                <td>Posible hipotensión</td>
+                <td>Apnea transitoria, exige control V aérea</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+       
+   
+      </article>
+      <!-- PROCEDIMIENTOS (recomendaciones) -->
+      <article class="proc-card proc-card--wide">
+        <h3 class="proc-card-title">Procedimientos</h3>
+ <p class="proc-hint">
+          Existen varias opciones posibles según indicaciones y experiencia del facultativo
+        </p><br>
+        <div class="proc-steps">
+          <div class="proc-step">
+            <div class="proc-step-badge">*</div>
+            <div class="proc-step-body">
+              <div class="proc-step-title">Ansiolisis en procedimientos poco o nada dolorosos</div>
+              <div class="proc-step-text">Cuerpos extraños, VVP, exploración genital, etc.</div>
+              <div class="proc-chip-row">
+                <span class="proc-chip">N₂O (óxido nitroso)</span>
+                <span class="proc-chip">Midazolam</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="proc-step">
+            <div class="proc-step-badge">*</div>
+            <div class="proc-step-body">
+              <div class="proc-step-title">Pruebas de imagen</div>
+              <div class="proc-step-text"><strong>TAC:</strong> Midazolam IN o IV / Propofol IV</div>
+              <div class="proc-step-text"><strong>RMN:</strong> Dexmedetomidina IN o IV / Propofol IV</div>
+            </div>
+          </div>
+
+          <div class="proc-step">
+            <div class="proc-step-badge">*</div>
+            <div class="proc-step-body">
+              <div class="proc-step-title">Otras pruebas</div>
+              <div class="proc-step-text">
+                Electroencefalograma en paciente no colaborador. Potenciales evocados. Estudios oftalmológicos prolongados.
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+
+</section>
+
+<!-- ESTRATEGIA: POCO DOLOROSOS (placeholder) -->
+<section class="section" id="section-proc-poco-dolorosos" hidden>
+  <div class="section-header">
+    <span class="pill chk">PROC. POCO DOLOROSOS</span>
+  </div>
+  <div class="info-wrap">
+    <p class="help">Sección pendiente de contenido.</p>
+  </div>
+</section>
+
+<!-- ESTRATEGIA: MUY DOLOROSOS (placeholder) -->
+<section class="section" id="section-proc-muy-dolorosos" hidden>
+  <div class="section-header">
+    <span class="pill chk">PROC. MUY DOLOROSOS</span>
+  </div>
+  <div class="info-wrap">
+    <p class="help">Sección pendiente de contenido.</p>
+  </div>
+</section>
+
+<!-- ANALGÉSICOS SISTÉMICOS (placeholder) -->
+<section class="section" id="section-analgesicos-sistemicos" hidden>
+  <div class="section-header">
+    <span class="pill ant">ANALGÉSICOS SISTÉMICOS</span>
+  </div>
+  <div class="info-wrap">
+    <p class="help">Sección pendiente de contenido.</p>
+  </div>
+</section>
+
+<!-- MANEJO EVENTOS ADVERSOS (placeholder) -->
+<section class="section" id="section-eventos-adversos" hidden>
+  <div class="section-header">
+    <span class="pill ant">EVENTOS ADVERSOS</span>
+  </div>
+  <div class="info-wrap">
+    <p class="help">Sección pendiente de contenido.</p>
+  </div>
+</section>
+
+
+  <!-- CHECKLIST -->
+  <section class="section" id="section-checklist" hidden>
+    <div class="section-header">
+      <span class="pill chk">CHECKLIST</span>
+    </div>
+    <div class="checklist-wrap">
+      <h2 class="checklist-title">Check List previa realización de procedimientos de Sedoanalgesia</h2>
+      <ul class="checklist" id="checklist-root">
+        <li>
+          <label class="ck-line"><input type="checkbox"><span class="destacado">Hoja de Procedimiento/Recogida de datos</span></label>
+          <ul>
+            <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Anamnesis (esquema SAMPLE)</span></label></li>
+            <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Exploración física (vía aérea, ACP, vía aérea dificil, etc)</span></label></li>
+          </ul>
+        </li>
+
+        <li><label class="ck-line"><input type="checkbox"><span class="destacado">Explicación procedimiento + Consentimiento informado</span></label></li>
+        <li>
+			<label class="ck-line"><input type="checkbox"><span class="destacado">Material</span></label>
+			<ul>
+				<li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Monitorización (monitor, sensor oximetría, capnografía)</span></label></li>
+          
+				<li>
+					<details class="ck-group" open>
+					<summary>
+					  <div class="ck-line"><input type="checkbox"><span class="no_destacado">Via aérea básica</span></div>
+					</summary>
+					  <ul>
+						<li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Caudalímetro O2+ gafas nasales</span></label></li>
+						<li><label class="ck-line"><input type="checkbox"><span class="no_destacado">bolsa autoinflable/mascarilla facial</span></label></li>
+						<li><label class="ck-line"><input type="checkbox"><span class="no_destacado">sonda de aspiración</span></label></li>
+					  </ul>
+				  	</details>
+				</li>
+
+				<li>
+				  <details class="ck-group">
+					<summary>
+					  <div class="ck-line"><input type="checkbox"><span class="no_destacado">Material vía aérea avanzada (disponible)</span></div>
+					</summary>
+					<ul>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Cánulas orofaríngeas (Guédel)</span></label></li>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Laringoscopio (+ pilas/bombillas de repuesto)</span></label></li>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Tubos endotraqueales</span></label></li>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Fiador + Jeringa para inflar cuff + Lubricante de tubo</span></label></li>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Fijación para tubo endotraqueal</span></label></li>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Mascarilla laringea</span></label></li>
+					</ul>
+				  </details>
+				</li>
+
+				<li>
+				  <details class="ck-group">
+					<summary>
+					  <div class="ck-line"><input type="checkbox"><span class="no_destacado">Acceso vascular (opcional)</span></div>
+					</summary>
+					<ul>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Catéteres IV (24G, 22G, 20G)</span></label></li>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Tortor+ antiseptico+ gasas+ apósitos.</span></label></li>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Llave de 3 pasos +conector</span></label></li>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Jeringas + SSF</span></label></li>
+					</ul>
+				  </details>
+				</li>
+
+				<li>
+				  <details class="ck-group">
+					<summary>
+					  <div class="ck-line"><input type="checkbox"><span class="no_destacado">Otros (disponible)</span></div>
+					</summary>
+					<ul>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Guantes (estériles y no estériles)</span></label></li>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Mascarillas</span></label></li>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Cronómetro</span></label></li>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Carro de parada pediátrico</span></label></li>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Desfibrilador manual con palas pediátricas</span></label></li>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Equipo de RCP (mascarilla, tabla rígida)</span></label></li>
+					  <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Tabla Broselow o guía de dosis por peso (excel)</span></label></li>
+					</ul>
+				  </details>
+				</li>
+			</ul>
+        </li>
+		
+
+        <li>
+          <details class="ck-group">
+            <summary>
+              <div class="ck-line"><input type="checkbox"><span class="destacado">Medicación</span></div>
+            </summary>
+            <ul>
+              <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Sedantes (midazolam / ketamina / propofol / dexmedetomidina)</span></label></li>
+              <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Analgésicos: fentanilo / morfina / paracetamol / ibuprofeno</span></label></li>
+              <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Antagonistas: naloxona / flumazenilo</span></label></li>
+              <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Antieméticos: ondansetrón</span></label></li>
+              <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Otros: Adrenalina, atropina, corticoids, antihistamínicos, glucosado 10%</span></label></li>
+            </ul>
+          </details>
+        </li>
+
+        <li>
+          <details class="ck-group">
+            <summary>
+              <div class="ck-line"><input type="checkbox"><span class="destacado">Otros (disponible)</span></div>
+            </summary>
+            <ul>
+              <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Guantes (estériles y no estériles)</span></label></li>
+              <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Mascarillas</span></label></li>
+              <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Cronómetro</span></label></li>
+              <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Carro de parada pediátrico</span></label></li>
+              <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Desfibrilador manual con palas pediátricas</span></label></li>
+              <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Equipo de RCP (mascarilla, tabla rígida)</span></label></li>
+              <li><label class="ck-line"><input type="checkbox"><span class="no_destacado">Tabla Broselow o guía de dosis por peso (excel)</span></label></li>
+            </ul>
+          </details>
+        </li>
+
+        <li><label class="ck-line"><input type="checkbox"><span class="destacado">Hoja de información al alta.</span></label></li>
+      </ul>
+    </div>
+  </section>
+  
+  <!-- ✅ CRITERIOS ALTA -->
+<section class="section" id="section-alta" hidden>
+  <div class="section-header">
+    <span class="pill alt">CRITERIOS ALTA</span>
+  </div>
+
+  <div class="info-wrap">
+    <h2 class="info-title">Criterios de alta tras la realización de Sedoanalgesia</h2>
+
+    <div class="info-grid">
+      <article class="info-card">
+        <h3>1. Estado de consciencia y neurológico</h3>
+        <p><b>Situación basal previa al procedimiento.</b> Habla de manera coherente / reconoce a sus padres.</p>
+      </article>
+
+      <article class="info-card">
+        <h3>2. Vía aérea permeable</h3>
+        <p>Sin soporte ni maniobras.</p>
+      </article>
+
+      <article class="info-card">
+        <h3>3. Constantes vitales en rango</h3>
+        <p>SatO2 normal al aire ambiente.</p>
+      </article>
+
+      <article class="info-card">
+        <h3>4. Control postural y/o deambulación</h3>
+        <p>Sin asistencia.</p>
+      </article>
+
+      <article class="info-card">
+        <h3>5. Criterios de confort y otros</h3>
+        <ul>
+          <li>Control del dolor adecuado.</li>
+          <li>Bien hidratado, sin vómitos.</li>
+          <li>Sangrados controlados.</li>
+        </ul>
+      </article>
+
+      <article class="info-card">
+        <h3>6. Requisitos logísticos (post-alta)</h3>
+        <ul>
+          <li><b>Acompañante responsable:</b> alta a un adulto capaz de vigilar durante transporte y en casa.</li>
+          <li><b>Instrucciones por escrito:</b> signos de alarma (dificultad respiratoria, somnolencia excesiva, vómitos) y teléfono de contacto de urgencias.</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN SUEROTERAPIA -->
+
+<section class="section" id="section-sueroterapia" hidden>
+  <div class="section-header section-header--with-filter">
+    <span class="pill seu">SUEROTERAPIA</span>
+
+    <div class="suero-subtabs" id="sueroSubtabs" role="tablist" aria-label="Sueroterapia">
+      <button class="menu-item is-active" data-suero-view="calculo" type="button">Cálculo</button>
+      <button class="menu-item" data-suero-view="composicion" type="button">Composición</button>
+      <button class="menu-item" data-suero-view="rehidratacion" type="button">Rehidratación rápida</button>
+      <button class="menu-item" data-suero-view="deshidrataciones" type="button">Deshidrataciones</button>
+    </div>
+	
+<!-- Dropdown (móvil) para subpestañas de suero -->
+<div class="drug-dd suero-dd" id="sueroDD">
+  <button class="drug-dd__btn" type="button" aria-haspopup="listbox" aria-expanded="false">
+    <span class="drug-dd__label">CÁLCULO</span>
+    <span class="drug-dd__chev" aria-hidden="true">▾</span>
+  </button>
+  <div class="drug-dd__panel" role="listbox" tabindex="-1"></div>
+</div>
+
+  </div>
+
+  <div class="checklist-wrap">
+    <div class="suero-view" id="suero-calculo">
+      <div class="ck-line">
+        <span><b>Superficie Corporal:</b> <span id="sueroM2Val">—</span></span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="sheet" id="sueroTablaVolumenes">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>cc/día</th>
+              <th>ml/h</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="suero-view" id="suero-composicion" hidden>
+
+		
+ <div class="checklist-wrap">
+    <div id="sueroCompTables"></div>
+  </div>
+
+
+    </div>
+
+    <div class="suero-view" id="suero-rehidratacion" hidden></div>
+    <div class="suero-view" id="suero-deshidrataciones" hidden></div>
+  </div>
+</section>
+
+<!-- SECCIÓN HIPOGLUCEMIA -->
+
+
+<section class="section" id="section-hipoglucemia" hidden>
+  <div class="section-header section-header--hipo">
+    <span class="pill hipo">HIPOGLUCEMIA</span>
+
+ <!-- PILL INFO (a la derecha) -->
+    <button id="hipoInfoBtn" class="pill pill-info" type="button" aria-haspopup="dialog" aria-expanded="false">
+      pulsar para info HIPOGLUCEMIA
+    </button>
+  </div>
+
+  <!-- MODAL/OVERLAY INFO HIPOGLUCEMIA (oculto por defecto) -->
+  <div id="hipoInfoOverlay" class="hipo-info-overlay" hidden aria-hidden="true">
+    <div class="hipo-info-card" role="dialog" aria-modal="true" aria-label="Información Hipoglucemia">
+      <div class="hipo-info-card__title">HIPOGLUCEMIA</div>
+
+      <!-- TABLA (editable) -->
+      <table class="sheet hipo-info-table">
+        <tbody>
+          <tr>
+            <td>&lt; 25 mg/dl</td>
+            <td>en PREMATUROS</td>
+          </tr>
+          <tr>
+            <td>&lt; 30 mg/dl</td>
+            <td>en RN a TÉRMINO</td>
+          </tr>
+          <tr>
+            <td>&lt; 40 mg/dl</td>
+            <td>en LACTANTES</td>
+          </tr>
+          <tr>
+            <td>&lt; 50 mg/dl</td>
+            <td>en NIÑOS MAYORES</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="hipo-info-hint">Pulsa en la tarjeta o fuera para cerrar.</div>
+    </div>
+  </div>
+  
+
+
+<!-- 1º BOLO -->
+<div class="hipo-block hipo-accent hipo-block--bolo">
+  <div class="hipo-block__head">
+    <h3 class="hipo-block__title">1º BOLO</h3>
+  </div>
+
+  <div class="table-wrap">
+    <table class="sheet" id="tablaBolo">
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Dosis</th>
+          <th>Solución</th>
+          <th>Resultado</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 2º MANTENIMIENTO (si precisa) -->
+<div class="hipo-block hipo-accent hipo-block--mant">
+  <div class="hipo-block__head">
+    <h3 class="hipo-block__title">2º MANTENIMIENTO <span class="hipo-head-note">(si precisa)</span></h3>
+  </div>
+
+  <div class="table-wrap">
+    <table class="sheet" id="tablaMantenimiento">
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Aporte</th>
+          <th>Solución</th>
+          <th>Resultado</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+
+    <!-- Alternativa glucagón -->
+    <div class="ck-line suero-note" aria-label="Alternativa">
+      <div class="prose"></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer></footer>
+<script src="scripts/sheet.data.js" defer></script>
+<script src="scripts/sheet.calc.js" defer></script>
+<script src="scripts/transpose.js" defer></script>
+<script src="scripts/sticky.js" defer></script>
+<script src="scripts/sheet.render.js" defer></script>
+<script src="scripts/dropdown.js" defer></script>
+<script src="scripts/drawer.js" defer></script>
+<script src="scripts/checklist.js" defer></script>
+
+<script src="scripts/analgesicos.locales.js" defer></script>
+
+<script src="scripts/suero.data.js" defer></script>
+<script src="scripts/suero.calc.js" defer></script>
+<script src="scripts/suero.render.js" defer></script>
+<script src="scripts/suero.ui.js" defer></script>
+
+<script src="scripts/hipoglucemia.js" defer></script>
+
+<script src="scripts/peso.stepper.js" defer></script>
+<script src="scripts/sheet.ui.js" defer></script>
+
+
+</body>
+</html>
